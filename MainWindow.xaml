@@ -8,5 +8,28 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
 
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ListView x:Name="listView" Width="800" Height="350" Margin="0"  ItemsSource="{Binding PingInfos}" >
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="域名" Width="120" DisplayMemberBinding="{Binding Domainname}"/>
+                        <GridViewColumn Header="IP地址" Width="100" DisplayMemberBinding="{Binding Ip}"/>
+                        <!--<GridViewColumn Header="主机名" Width="80" />
+                        <GridViewColumn Header="成功次数" Width="100" />
+                        <GridViewColumn Header="失败次数" Width="100" />
+                        <GridViewColumn Header="最短Ping用时" Width="120" />
+                        <GridViewColumn Header="最长Ping用时" Width="120" />-->
+
+                    </GridView>
+                </ListView.View>
+            </ListView>
+
+
+            <Button x:Name="addButton" Grid.Row="1" Content="开始" Width="80" Height="40" Margin="697,22,23,23"/>
+        </Grid>
     </Grid>
 </Window>
