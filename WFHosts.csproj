@@ -6,4 +6,16 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Wpf" Version="8.0.0.1909" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="mode\WarframeIP.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

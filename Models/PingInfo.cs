@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WFHosts.Models
 {
-    class PingInfo
+    public class PingInfo
     {
-        private string domainname;
-        private string ip;
-
-        public string Domainname { get => domainname; set => domainname = value; }
-        public string Ip { get => ip; set => ip = value; }
+        /// <summary>
+        /// 域名
+        /// </summary>
+        public string DomainName { get; set; }
+        /// <summary>
+        /// IP地址
+        /// </summary>
+        public string IPAddr { get; set; }
     }
 }
