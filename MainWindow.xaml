@@ -11,10 +11,28 @@
             <RowDefinition Height="300"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <DataGrid GridLinesVisibility="All" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,4" ItemsSource="{Binding PingInfos}" AutoGenerateColumns="False">
+        <DataGrid GridLinesVisibility="All" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,4" ItemsSource="{Binding PingInfoMenu}" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="域名" Width="120" Binding="{Binding DomainName}" />
-                <DataGridTextColumn Header="IP地址" Width="120" Binding="{Binding IPAddr}"/>
+                <DataGridTextColumn Header="域名" Width="120" Binding="{Binding PingInfo.DomainName}" />
+                <DataGridTextColumn Header="IP地址" Width="120" Binding="{Binding PingInfo.IPAddr}"/>
+                <!--下面这个是用模板定义，为了解决要双击才能选中,WPF的所有控件都是可以用这种模板的形式去组合的
+                <DataGridTemplateColumn Header="选中" Width="120">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding Path=IsSelected,UpdateSourceTrigger=PropertyChanged}" 
+                                      VerticalAlignment="Center" HorizontalAlignment="Center"
+                                      Command="{Binding Path=DataContext.SelectMenuItemCommand,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type DataGrid}}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+            
+                <!--用这种方法好像也是可以的-->
+                <DataGridCheckBoxColumn Header="选中" Width="120" Binding="{Binding IsSelected}">
+                    <DataGridCheckBoxColumn.ElementStyle>
+                        <Style TargetType="CheckBox"/>
+                    </DataGridCheckBoxColumn.ElementStyle>
+                </DataGridCheckBoxColumn>
+  
             </DataGrid.Columns>
         </DataGrid>
 

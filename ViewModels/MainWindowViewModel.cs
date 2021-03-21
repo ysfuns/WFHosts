@@ -1,20 +1,24 @@
 ﻿using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WFHosts.Models;
+using WFHosts.Services;
 
 namespace WFHosts.ViewModels
 {
-    class MainWindowViewModel : NotificationObject
+    class MainWindowViewModel : BindableBase
     {
         public DelegateCommand SelectMenuItemCommand;
         //这里是处理界面的一些逻辑
         private List<PingInfoItemViewModel> pingInfoMenu;
 
-        internal List<PingInfoItemViewModel> PingInfoMenu 
+        //这里internal为什么不行？xaml访问不到
+        public List<PingInfoItemViewModel> PingInfoMenu 
         { 
             get => pingInfoMenu;
             set
@@ -35,7 +39,20 @@ namespace WFHosts.ViewModels
         private void LoadPingInfoItem()
         {
             //这里通过xml或者json service读取文件 通过getAll方法
-            
+            pingInfoMenu = new List<PingInfoItemViewModel>();
+            JsonDataService jsonDataService = new JsonDataService();
+            List<PingInfo> pingInfoList = jsonDataService.GetAllPingInfos();
+            if (pingInfoList == null)
+            {
+                Trace.WriteLine("pingInfoList为空");
+                return;
+            }
+            foreach(var info in pingInfoList)
+            {
+                PingInfoItemViewModel pingInfoItemView = new PingInfoItemViewModel();
+                pingInfoItemView.PingInfo = info;
+                pingInfoMenu.Add(pingInfoItemView);
+            }
         }
 
         private void SelectMenuItemExecute()
