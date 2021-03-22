@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using WFHosts.Models;
@@ -28,13 +29,23 @@ namespace WFHosts.ViewModels
             }
         }
 
+
         public MainWindowViewModel()
         {
             this.LoadPingInfoItem();
             this.SelectMenuItemCommand = new DelegateCommand(new Action(this.SelectMenuItemExecute));//绑定选中datagrid事件
         }
 
-        
+        [DllImport("Pinginfo.dll", EntryPoint = "GetPingInfos")]
+        static extern void GetPingInfos(List<PingInfoItemViewModel> list);
+        [DllImport("Pinginfo.dll", EntryPoint = "Register_callback")]
+        static extern void Register_callback(Delegate callback);
+
+
+        public delegate void RealCallback(string name,int h);
+
+        private RealCallback realCallBack = null;
+
 
         private void LoadPingInfoItem()
         {
@@ -44,15 +55,28 @@ namespace WFHosts.ViewModels
             List<PingInfo> pingInfoList = jsonDataService.GetAllPingInfos();
             if (pingInfoList == null)
             {
-                Trace.WriteLine("pingInfoList为空");
                 return;
             }
             foreach(var info in pingInfoList)
             {
                 PingInfoItemViewModel pingInfoItemView = new PingInfoItemViewModel();
                 pingInfoItemView.PingInfo = info;
+                pingInfoItemView.ID = pingInfoList.IndexOf(info);
                 pingInfoMenu.Add(pingInfoItemView);
             }
+            Console.WriteLine("测试一下效果");
+
+
+            //给委托赋值
+            realCallBack = RealCallbackFun;
+            //注册回调函数
+            Register_callback(realCallBack);
+            GetPingInfos(pingInfoMenu);
+        }
+
+        private void RealCallbackFun(string name, int h)
+        {
+            Console.WriteLine("这是回调返回的:"+name+h);
         }
 
         private void SelectMenuItemExecute()

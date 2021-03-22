@@ -32,14 +32,4 @@ namespace WFHosts.Services
             return pingInfoList;
         }
     }
-    public class Warframe
-    {
-        public string domainname { get; set; }
-        public string ipaddr { get; set; }
-    }
-
-    public class RootObject
-    {
-        public List<Warframe> warframe { get; set; }
-    }
 }
