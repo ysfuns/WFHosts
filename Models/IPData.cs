@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WFHosts.Models
+﻿namespace WFHosts.Models
 {
-    public class IPInfo
+    public class IPData
     {
-        public int ID { get; set; }
         /// <summary>
         /// 域名
         /// </summary>

@@ -39,33 +39,38 @@ namespace WFHosts.ViewModels
         }
 
         [DllImport("Pinginfo.dll", EntryPoint = "GetPingInfos")]
-        static extern void GetPingInfos(BarcodeInfo[] info,int num);
+        static extern void GetPingInfos(IPInfo[] info,int num);
         [DllImport("Pinginfo.dll", EntryPoint = "Register_callback")]
         static extern void Register_callback(Delegate callback);
 
 
-        public delegate void RealCallback(IPInfo info,int h);
+        public delegate void RealCallback(PingInfoFromCallBack info,int h);
 
         private RealCallback realCallBack = null;
 
         
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        public struct BarcodeInfo
+        public struct IPInfo
         {
-            public int Num;
+            public int ID;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
             public string Domain;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
             public string IPAddr;
         };
+        public struct PingInfoFromCallBack
+        {
+            public string Domain;
+            public string IPAddr;
+        }
         
         private void LoadPingInfoItem()
         {
             //这里通过xml或者json service读取文件 通过getAll方法
             pingInfoMenu = new List<PingInfoItemViewModel>();
             JsonDataService jsonDataService = new JsonDataService();
-            List<IPInfo> pingInfoList = jsonDataService.GetAllPingInfos();
+            List<IPData> pingInfoList = jsonDataService.GetAllIPDatas();
             if (pingInfoList == null)
             {
                 return;
@@ -73,42 +78,38 @@ namespace WFHosts.ViewModels
             foreach(var info in pingInfoList)
             {
                 PingInfoItemViewModel pingInfoItemView = new PingInfoItemViewModel();
-                pingInfoItemView.PingInfo = info;
+                pingInfoItemView.PingInfo.IPData = info;
                 pingInfoItemView.ID = pingInfoList.IndexOf(info);
                 pingInfoMenu.Add(pingInfoItemView);
             }
-            Console.WriteLine("测试一下效果");
+
+
+            IPInfo[] iPInfos = new IPInfo[pingInfoMenu.Count];
+            int num = 0;
+            foreach(var ipinfo in pingInfoMenu)
+            {
+                iPInfos[num].ID = ipinfo.ID;
+                iPInfos[num].Domain = ipinfo.PingInfo.IPData.DomainName;
+                iPInfos[num].IPAddr = ipinfo.PingInfo.IPData.IPAddr;
+                num++;
+            }
+
 
 
             //给委托赋值
             realCallBack = RealCallbackFun;
             //注册回调函数
             //Register_callback(realCallBack);
-            BarcodeInfo info1 = new BarcodeInfo();
-            info1.Num = 4;
-            info1.Domain = "www.baidu.com";
-            info1.IPAddr = "192.168.1.1";
-
-
-            BarcodeInfo[] test = new BarcodeInfo[2];
-            test[0] = info1;
-
-            BarcodeInfo info2 = new BarcodeInfo();
-            info2.Num = 7;
-            info2.Domain = "www.google.com";
-            info2.IPAddr = "192.168.1.2";
-            test[1] = info2;
-
-
-            GetPingInfos(test, test.Length);
+            GetPingInfos(iPInfos, iPInfos.Length);
         }
 
 
 
 
-        private void RealCallbackFun(IPInfo info, int h)
+        private void RealCallbackFun(PingInfoFromCallBack info, int id)
         {
-            Console.WriteLine("这是回调返回的:"+info.DomainName+ info .IPAddr+ h);
+            Console.WriteLine("回调返回的 要修改的ID为:" + id);
+            Console.WriteLine("回调返回的:"+info.Domain+ info.IPAddr);
         }
 
         private void SelectMenuItemExecute()

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WFHosts.Models;
 
-namespace WFHosts.Services
+namespace WFHosts.Models
 {
-    public interface IDataService
+    public class PingInfo
     {
-        List<IPData> GetAllIPDatas();
+        public IPData IPData;
+        //ping ip时候获取的数据
     }
 }
