@@ -9,6 +9,6 @@ namespace WFHosts.Services
 {
     public interface IDataService
     {
-        List<PingInfo> GetAllPingInfos();
+        List<IPInfo> GetAllPingInfos();
     }
 }

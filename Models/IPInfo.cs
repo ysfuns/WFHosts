@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace WFHosts.Models
 {
-    public class PingInfo
+    public class IPInfo
     {
+        public int ID { get; set; }
         /// <summary>
         /// 域名
         /// </summary>

@@ -12,20 +12,23 @@ namespace WFHosts.Services
 {
     class JsonDataService : IDataService
     {
-        public List<PingInfo> GetAllPingInfos()
+        public List<IPInfo> GetAllPingInfos()
         {
-            List<PingInfo> pingInfoList = new List<PingInfo>();
+            List<IPInfo> pingInfoList = new List<IPInfo>();
             string jsonFileName = System.IO.Path.Combine(Environment.CurrentDirectory, @"Mode\WarframeIP.json");
             using (System.IO.StreamReader file = System.IO.File.OpenText(jsonFileName))
             {
                 using JsonTextReader reader = new JsonTextReader(file);
                 JObject o = (JObject)JToken.ReadFrom(reader);
                 var w = o["warframe"];
+                int id = 0;
                 foreach (JObject e in w)
                 {
-                    PingInfo pingInfo = new PingInfo();
+                    IPInfo pingInfo = new IPInfo();
                     pingInfo.DomainName = e["domainname"].ToString();
                     pingInfo.IPAddr = e["ipaddr"].ToString();
+                    pingInfo.ID = id;
+                    id++;
                     pingInfoList.Add(pingInfo);
                 }
             }

@@ -12,8 +12,8 @@ namespace WFHosts.ViewModels
     //抽象出的DataGrid的每一行的对象，是否选中是这个UI界面对象的属性，不是pinginfo的属性，所以要抽离出来
     class PingInfoItemViewModel: BindableBase
     {
-        public int ID { get; set; }
-        private PingInfo pingInfo;
+        
+        private IPInfo pingInfo;
         private bool isSelected;
         public bool IsSelected 
         { 
@@ -25,7 +25,7 @@ namespace WFHosts.ViewModels
             } 
         }
 
-        public PingInfo PingInfo 
+        public IPInfo PingInfo 
         { 
             get => pingInfo;
             set
