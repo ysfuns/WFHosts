@@ -2,19 +2,19 @@
   "warframe": [
     {
       "domainname": "www.baidu.com",
-      "ipaddr": "192.168.1.1"
+      "ipaddr": "23.5.242.238"
     },
     {
       "domainname": "www.baidu.com",
-      "ipaddr": "192.168.1.2"
+      "ipaddr": "72.247.104.185"
     },
     {
       "domainname": "www.google.com",
-      "ipaddr": "192.168.1.3"
+      "ipaddr": "23.75.233.2"
     },
     {
       "domainname": "www.google.com",
-      "ipaddr": "192.168.1.4"
+      "ipaddr": "23.59.125.29"
     }
   ]
 }

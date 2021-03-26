@@ -22,18 +22,23 @@ namespace WFHosts.ViewModels
             set
             {
                 isSelected = value;
-                this.RaisePropertyChanged("IsSelected");
+                this.RaisePropertyChanged(nameof(IsSelected));
             }
         }
 
-        public PingInfo PingInfo
-        {
+        public PingInfo PingInfo 
+        { 
             get => pingInfo;
             set
             {
                 pingInfo = value;
-                this.RaisePropertyChanged("PingInfo");
+                this.RaisePropertyChanged(nameof(PingInfo));
             }
+        }
+
+        public PingInfoItemViewModel()
+        {
+            PingInfo = new PingInfo();
         }
     }
 }

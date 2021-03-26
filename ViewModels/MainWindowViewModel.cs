@@ -27,7 +27,7 @@ namespace WFHosts.ViewModels
             set
             {
                 pingInfoMenu = value;
-                this.RaisePropertyChanged("PingInfoMenu");
+                this.RaisePropertyChanged(nameof(PingInfoMenu));
             }
         }
 
@@ -40,6 +40,11 @@ namespace WFHosts.ViewModels
 
         [DllImport("Pinginfo.dll", EntryPoint = "GetPingInfos")]
         static extern void GetPingInfos(IPInfo[] info,int num);
+
+
+        [DllImport("Pinginfo.dll", EntryPoint = "StopGetPingInfos")]
+        static extern void StopGetPingInfos();
+
         [DllImport("Pinginfo.dll", EntryPoint = "Register_callback")]
         static extern void Register_callback(Delegate callback);
 
@@ -48,21 +53,29 @@ namespace WFHosts.ViewModels
 
         private RealCallback realCallBack = null;
 
-        
 
+        /// <summary>
+        /// 传输给DLL的结构体,IP地址可能重复，所以用ID的唯一性来指向这个对象，IP占四个字节
+        /// </summary>
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         public struct IPInfo
         {
             public int ID;
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
-            public string Domain;
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 16)]
             public string IPAddr;
         };
+        /// <summary>
+        /// 从DLL返回的结构体，ping ip时获取的所有信息
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
         public struct PingInfoFromCallBack
         {
-            public string Domain;
-            public string IPAddr;
+            public int PacketsSent;
+            public int PacketsRecv;
+            public double PacketLoss;
+            public double MinRtt;
+            public double AvgRtt;
+            public double MaxRtt;
         }
         
         private void LoadPingInfoItem()
@@ -82,34 +95,24 @@ namespace WFHosts.ViewModels
                 pingInfoItemView.ID = pingInfoList.IndexOf(info);
                 pingInfoMenu.Add(pingInfoItemView);
             }
-
-
             IPInfo[] iPInfos = new IPInfo[pingInfoMenu.Count];
             int num = 0;
-            foreach(var ipinfo in pingInfoMenu)
+            foreach (var ipinfo in pingInfoMenu)
             {
                 iPInfos[num].ID = ipinfo.ID;
-                iPInfos[num].Domain = ipinfo.PingInfo.IPData.DomainName;
                 iPInfos[num].IPAddr = ipinfo.PingInfo.IPData.IPAddr;
                 num++;
             }
-
-
-
             //给委托赋值
             realCallBack = RealCallbackFun;
             //注册回调函数
-            //Register_callback(realCallBack);
+            Register_callback(realCallBack);
             GetPingInfos(iPInfos, iPInfos.Length);
         }
 
-
-
-
         private void RealCallbackFun(PingInfoFromCallBack info, int id)
         {
-            Console.WriteLine("回调返回的 要修改的ID为:" + id);
-            Console.WriteLine("回调返回的:"+info.Domain+ info.IPAddr);
+            Console.WriteLine("回调返回的 要修改的ID为:" + id+"---发包:"+info.PacketsSent+"--接收:"+info.PacketsRecv+"--丢包率:"+info.PacketLoss+"---最小ping:"+info.MinRtt);
         }
 
         private void SelectMenuItemExecute()
