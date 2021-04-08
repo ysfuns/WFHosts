@@ -17,6 +17,7 @@ namespace WFHosts.ViewModels
     class MainWindowViewModel : BindableBase
     {
         public DelegateCommand SelectMenuItemCommand;
+        public DelegateCommand WriteHostsCommand;
         //这里是处理界面的一些逻辑
         private List<PingInfoItemViewModel> pingInfoMenu;
 
@@ -36,22 +37,28 @@ namespace WFHosts.ViewModels
         {
             this.LoadPingInfoItem();
             this.SelectMenuItemCommand = new DelegateCommand(new Action(this.SelectMenuItemExecute));//绑定选中datagrid事件
-        }
-
+            this.WriteHostsCommand = new DelegateCommand(new Action(this.WriteHostsExecute));
+    }
+        /// <summary>
+        /// 获取ping的信息
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="num"></param>
         [DllImport("Pinginfo.dll", EntryPoint = "GetPingInfos")]
         static extern void GetPingInfos(IPInfo[] info,int num);
 
-
+        /// <summary>
+        /// 关闭DLL中ping功能
+        /// </summary>
         [DllImport("Pinginfo.dll", EntryPoint = "StopGetPingInfos")]
         static extern void StopGetPingInfos();
 
         [DllImport("Pinginfo.dll", EntryPoint = "Register_callback")]
         static extern void Register_callback(Delegate callback);
 
-
-        public delegate void RealCallback(PingInfoFromCallBack info,int h);
-
-        private RealCallback realCallBack = null;
+        //声明委托
+        public delegate void PingInfoCallback(PingInfoFromCallBack info,int h);
+        private PingInfoCallback PingInfoCallBack = null;
 
 
         /// <summary>
@@ -104,13 +111,13 @@ namespace WFHosts.ViewModels
                 num++;
             }
             //给委托赋值
-            realCallBack = RealCallbackFun;
+            PingInfoCallBack = PingInfoCallbackFun;
             //注册回调函数
-            Register_callback(realCallBack);
-            GetPingInfos(iPInfos, iPInfos.Length);
+            Register_callback(PingInfoCallBack);
+            //GetPingInfos(iPInfos, iPInfos.Length);
         }
 
-        private void RealCallbackFun(PingInfoFromCallBack info, int id)
+        private void PingInfoCallbackFun(PingInfoFromCallBack info, int id)
         {
             Console.WriteLine("回调返回的 要修改的ID为:" + id+"---发包:"+info.PacketsSent+"--接收:"+info.PacketsRecv+"--丢包率:"+info.PacketLoss+"---最小ping:"+info.MinRtt);
         }
@@ -119,6 +126,10 @@ namespace WFHosts.ViewModels
         {
             //选中之后是直接写入hosts文件 还是怎么处理？
             int count = this.pingInfoMenu.Count(i => i.IsSelected == true);
+        }
+        private void WriteHostsExecute()
+        {
+            Console.WriteLine("写入hosts文件,并刷新缓存");
         }
     }
 }
