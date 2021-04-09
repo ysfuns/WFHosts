@@ -16,10 +16,12 @@ namespace WFHosts.ViewModels
 {
     class MainWindowViewModel : BindableBase
     {
-        public DelegateCommand SelectMenuItemCommand;
-        public DelegateCommand WriteHostsCommand;
+        public DelegateCommand SelectMenuItemCommand { get; }
+        public DelegateCommand WriteHostsCommand { get; }
         //这里是处理界面的一些逻辑
         private List<PingInfoItemViewModel> pingInfoMenu;
+
+        public PingInfoItemViewModel SelectItem { get; set; }
 
         //这里internal为什么不行？xaml访问不到
         public List<PingInfoItemViewModel> PingInfoMenu 
@@ -114,22 +116,73 @@ namespace WFHosts.ViewModels
             PingInfoCallBack = PingInfoCallbackFun;
             //注册回调函数
             Register_callback(PingInfoCallBack);
-            //GetPingInfos(iPInfos, iPInfos.Length);
+            GetPingInfos(iPInfos, iPInfos.Length);
         }
 
         private void PingInfoCallbackFun(PingInfoFromCallBack info, int id)
         {
             Console.WriteLine("回调返回的 要修改的ID为:" + id+"---发包:"+info.PacketsSent+"--接收:"+info.PacketsRecv+"--丢包率:"+info.PacketLoss+"---最小ping:"+info.MinRtt);
+            PingInfoItemViewModel item = this.PingInfoMenu.Find(i => i.ID == id);
+            item.PingInfo.PacketsSent = info.PacketsSent.ToString();
         }
 
         private void SelectMenuItemExecute()
         {
             //选中之后是直接写入hosts文件 还是怎么处理？
+
+            Console.WriteLine(SelectItem.ID);
+
+
+
             int count = this.pingInfoMenu.Count(i => i.IsSelected == true);
+            Console.WriteLine(count);
         }
         private void WriteHostsExecute()
         {
+
+            var selectedRows = this.pingInfoMenu.Where(i => i.IsSelected);
+
+
+
             Console.WriteLine("写入hosts文件,并刷新缓存");
+            //string[] entry = { "127.0.0.2 api.warframe.com", "127.0.0.1 gaga.warframe.com" };
+            //if (ModifyHostsFile(entry))
+            //{
+            //    FlushDNSResolverCache();   
+            //}
         }
+
+        //修改或写入hosts文件
+        private bool ModifyHostsFile(string[] entry)
+        {
+            //读取hosts文件
+            string hostfile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
+            string[] lines = File.ReadAllLines(hostfile);
+
+            for (int i = 0; i < entry.Length; i++)
+            {
+                string[] strArray = entry[i].Split(' ');
+                if (lines.Any(s => s.Contains(strArray[1])))
+                {
+                    for (int j = 0; j < lines.Length; j++)
+                    {
+                        if (lines[j].Contains(strArray[1]))
+                            lines[j] = entry[i];
+                    }
+                    File.WriteAllLines(hostfile, lines);
+                }
+                else
+                {
+                    File.AppendAllLines(hostfile, new String[] { entry[i] });
+                }
+            }
+            return true;
+        }
+
+        //效果等同于ipconfig /flushdns 命令。
+        [DllImport("dnsapi", EntryPoint = "DnsFlushResolverCache")]
+        public static extern uint FlushDNSResolverCache();
+        
+
     }
 }
