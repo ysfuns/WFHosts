@@ -18,6 +18,12 @@ namespace WFHosts.ViewModels
     {
         public DelegateCommand SelectMenuItemCommand { get; }
         public DelegateCommand WriteHostsCommand { get; }
+        public DelegateCommand StartOrStopCommand { get; set; }
+
+        public bool isStartPing = false;
+        private string btn_StartOrStopContent="开始ping";
+        private IPInfo[] iPInfos = null;
+
         //这里是处理界面的一些逻辑
         private List<PingInfoItemViewModel> pingInfoMenu;
 
@@ -34,12 +40,21 @@ namespace WFHosts.ViewModels
             }
         }
 
+        public string Btn_StartOrStopContent 
+        { 
+            get => btn_StartOrStopContent; set
+            {
+                btn_StartOrStopContent = value;
+                this.RaisePropertyChanged(nameof(Btn_StartOrStopContent));
+            }
+        }
 
         public MainWindowViewModel()
         {
             this.LoadPingInfoItem();
             this.SelectMenuItemCommand = new DelegateCommand(new Action(this.SelectMenuItemExecute));//绑定选中datagrid事件
             this.WriteHostsCommand = new DelegateCommand(new Action(this.WriteHostsExecute));
+            this.StartOrStopCommand = new DelegateCommand(new Action(this.OnStartOrStopExecute));
     }
         /// <summary>
         /// 获取ping的信息
@@ -100,30 +115,36 @@ namespace WFHosts.ViewModels
             foreach(var info in pingInfoList)
             {
                 PingInfoItemViewModel pingInfoItemView = new PingInfoItemViewModel();
-                pingInfoItemView.PingInfo.IPData = info;
+                pingInfoItemView.IPData = info;
                 pingInfoItemView.ID = pingInfoList.IndexOf(info);
                 pingInfoMenu.Add(pingInfoItemView);
             }
-            IPInfo[] iPInfos = new IPInfo[pingInfoMenu.Count];
+            iPInfos = new IPInfo[pingInfoMenu.Count];
             int num = 0;
             foreach (var ipinfo in pingInfoMenu)
             {
                 iPInfos[num].ID = ipinfo.ID;
-                iPInfos[num].IPAddr = ipinfo.PingInfo.IPData.IPAddr;
+                iPInfos[num].IPAddr = ipinfo.IPData.IPAddr;
                 num++;
             }
             //给委托赋值
             PingInfoCallBack = PingInfoCallbackFun;
             //注册回调函数
             Register_callback(PingInfoCallBack);
-            GetPingInfos(iPInfos, iPInfos.Length);
+            //GetPingInfos(iPInfos, iPInfos.Length);
         }
 
         private void PingInfoCallbackFun(PingInfoFromCallBack info, int id)
         {
             Console.WriteLine("回调返回的 要修改的ID为:" + id+"---发包:"+info.PacketsSent+"--接收:"+info.PacketsRecv+"--丢包率:"+info.PacketLoss+"---最小ping:"+info.MinRtt);
-            PingInfoItemViewModel item = this.PingInfoMenu.Find(i => i.ID == id);
-            item.PingInfo.PacketsSent = info.PacketsSent.ToString();
+            PingInfo ping = new PingInfo();
+            ping.PacketsSent = info.PacketsSent.ToString();
+            ping.PacketLoss = info.PacketLoss.ToString();
+            ping.PacketsRecv = info.PacketsRecv.ToString();
+            ping.MaxRtt = info.MaxRtt.ToString();
+            ping.MinRtt = info.MinRtt.ToString();
+            ping.AvgRtt = info.AvgRtt.ToString();
+            this.PingInfoMenu.Find(i => i.ID == id).PingInfo = ping;
         }
 
         private void SelectMenuItemExecute()
@@ -150,6 +171,23 @@ namespace WFHosts.ViewModels
             //{
             //    FlushDNSResolverCache();   
             //}
+        }
+
+        private void OnStartOrStopExecute()
+        {
+            isStartPing = isStartPing ? false : true;
+            if (isStartPing)
+            {
+                Console.WriteLine("开始ping");
+                Btn_StartOrStopContent = "结束ping";
+                GetPingInfos(iPInfos, iPInfos.Length);
+            }
+            else
+            {
+                Console.WriteLine("结束ping");
+                Btn_StartOrStopContent = "开始ping";
+                StopGetPingInfos();
+            }
         }
 
         //修改或写入hosts文件

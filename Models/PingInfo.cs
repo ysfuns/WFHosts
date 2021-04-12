@@ -8,7 +8,7 @@ namespace WFHosts.Models
 {
     public class PingInfo
     {
-        private IPData iPData;
+        
         /// <summary>
         /// 主机名字
         /// </summary>
@@ -40,7 +40,7 @@ namespace WFHosts.Models
 
 
 
-        public IPData IPData { get => iPData; set => iPData = value; }
+        
         //ping ip时候获取的数据
     }
 }
