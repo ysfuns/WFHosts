@@ -12,8 +12,10 @@ namespace WFHosts.ViewModels
     //抽象出的DataGrid的每一行的对象，是否选中是这个UI界面对象的属性，不是pinginfo的属性，所以要抽离出来
     class PingInfoItemViewModel: BindableBase
     {
-        private IPData iPData;
+        //private IPData iPData;
         public int ID { get; set; }
+        public string IP { get; set; }
+        public string DomainName { get; set; }
         private PingInfo pingInfo;
         private bool isSelected;
         public bool IsSelected
@@ -36,7 +38,7 @@ namespace WFHosts.ViewModels
             }
         }
 
-        public IPData IPData { get => iPData; set => iPData = value; }
+        //public IPData IPData { get => iPData; set => iPData = value; }
 
         //public PingInfoItemViewModel()
         //{

@@ -25,7 +25,14 @@ namespace WFHosts.Services
                 {
                     IPData pingInfo = new IPData();
                     pingInfo.DomainName = e["domainname"].ToString();
-                    pingInfo.IPAddr = e["ipaddr"].ToString();
+
+                    var l = e["ipaddrs"];
+                    List<string> list = new List<string>();
+                    for (int i = 0; i < l.Count(); i++)
+                    {
+                        list.Add(l[i].ToString());
+                    }
+                    pingInfo.IPAddrs = list;
                     pingInfoList.Add(pingInfo);
                 }
             }

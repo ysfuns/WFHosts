@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WFHosts"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+        Title="WFHosts" Height="450" Width="800" Closed="Window_Closed">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -16,10 +16,11 @@
             <ColumnDefinition Width="Auto"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <DataGrid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" GridLinesVisibility="All" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,4" ItemsSource="{Binding PingInfoMenu}" SelectedItem="{Binding SelectItem,Mode=TwoWay}" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" GridLinesVisibility="All" CanUserAddRows="False" CanUserDeleteRows="False" Margin="0,4" ItemsSource="{Binding PingInfoList}" SelectedItem="{Binding SelectItem,Mode=TwoWay}" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="域名" Width="120" Binding="{Binding IPData.DomainName}" />
-                <DataGridTextColumn Header="IP地址" Width="120" Binding="{Binding IPData.IPAddr}"/>
+                <DataGridTextColumn Header="序号" Width="40" Binding="{Binding ID}" />
+                <DataGridTextColumn Header="域名" Width="120" Binding="{Binding DomainName}" />
+                <DataGridTextColumn Header="IP地址" Width="120" Binding="{Binding IP}"/>
                 <DataGridTextColumn Header="发包数" Width="120" Binding="{Binding PingInfo.PacketsSent}"/>
                 <DataGridTextColumn Header="收包数" Width="120" Binding="{Binding PingInfo.PacketsRecv}"/>
                 <DataGridTextColumn Header="丢包率" Width="120" Binding="{Binding PingInfo.PacketLoss}"/>
@@ -47,8 +48,14 @@
 
             </DataGrid.Columns>
         </DataGrid>
+        <ComboBox Grid.Row="1" Grid.Column="0" Width="160" Margin="10,10,450,10" ItemsSource="{Binding CbxSource,Mode=OneWay}" IsEnabled="{Binding IsCanChanged}" SelectedValuePath="ID" DisplayMemberPath="Domainname" SelectedItem="{Binding CbxSelectItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <Button x:Name="btn_StartOrStop" Margin="10,10,10,10" Padding="3" Grid.Row="1" Grid.Column="1" Content="{Binding Btn_StartOrStopContent}" Command="{Binding StartOrStopCommand}"/>
-        <Button x:Name="btn_WriteHosts" Margin="10,10,10,10" Padding="3" Grid.Row="1" Grid.Column="2" Content="写入Hosts" Command="{Binding WriteHostsCommand}" />
+        <Button x:Name="btn_WriteHosts" Margin="10,10,10,10" Padding="3" Grid.Row="1" Grid.Column="2" Content="写入Hosts" IsEnabled="{Binding IsCanWrite}" Command="{Binding WriteHostsCommand}" />
+        <TextBlock HorizontalAlignment="Left" Margin="217,0,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Center">
+            <Hyperlink Command="{Binding GoToGithubCommand}">
+                项目主页   
+            </Hyperlink>
+        </TextBlock>
 
 
 

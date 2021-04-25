@@ -1,4 +1,6 @@
-﻿namespace WFHosts.Models
+﻿using System.Collections.Generic;
+
+namespace WFHosts.Models
 {
     public class IPData
     {
@@ -9,6 +11,6 @@
         /// <summary>
         /// IP地址
         /// </summary>
-        public string IPAddr { get; set; }
+        public List<string> IPAddrs { get; set; }
     }
 }
