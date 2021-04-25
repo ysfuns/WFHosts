@@ -317,7 +317,7 @@ namespace WFHosts.ViewModels
 
         private void GoToGithub()
         {
-            System.Diagnostics.Process.Start("https://www.github.com/ysfuns/WFHosts");
+            System.Diagnostics.Process.Start("explorer.exe", "https://www.github.com/ysfuns/WFHosts");
         }
 
     }
